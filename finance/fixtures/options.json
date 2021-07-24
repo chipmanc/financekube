@@ -1,0 +1,74 @@
+[
+{
+  "model": "finance.stocksymbol",
+  "pk": "AAA",
+  "fields": {
+    "fair_value": 10.0,
+    "stars": 1,
+    "uncertainty": "Medium",
+    "link": "https://www.morningstar.com/stocks/xnys/aaa/quote"
+  }
+},
+{
+  "model": "finance.stocksymbol",
+  "pk": "BBB",
+  "fields": {
+    "fair_value": 25.0,
+    "stars": 2,
+    "uncertainty": "Medium",
+    "link": "https://www.morningstar.com/stocks/xnys/bbb/quote"
+  }
+},
+{
+  "model": "finance.stocksymbol",
+  "pk": "CCC",
+  "fields": {
+    "fair_value": 50.0,
+    "stars": 3,
+    "uncertainty": "High",
+    "link": "https://www.morningstar.com/stocks/xnas/ccc/quote"
+  }
+},
+{
+  "model": "finance.stocksymbol",
+  "pk": "DDD",
+  "fields": {
+    "fair_value": 75.0,
+    "stars": 4,
+    "uncertainty": "Medium",
+    "link": "https://www.morningstar.com/stocks/xnas/ddd/quote"
+  }
+},
+{
+  "model": "finance.stocksymbol",
+  "pk": "EEE",
+  "fields": {
+    "fair_value": 100.0,
+    "stars": 5,
+    "uncertainty": "Medium",
+    "link": "https://www.morningstar.com/stocks/xnas/eee/quote"
+  }
+},
+
+{
+  "model": "finance.option",
+  "pk": 1,
+  "fields": {
+    "symbol": "AAA_071621C25",
+    "ticker_id": "AAA",
+    "date": "2021-01-01",
+    "buy": null,
+    "sell": 0.08,
+    "stddev": 0.132,
+    "cdf": 0.128,
+    "pdf": 1.588,
+    "strike_discount": 0.88,
+    "profit_percent": 0.027,
+    "cagr": 5.993,
+    "days_to_exp": 5,
+    "screened": true,
+    "expired": false,
+    "sold": false
+  }
+}
+]
