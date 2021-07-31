@@ -1,4 +1,4 @@
-from django.shortcuts import render
+# from django.shortcuts import render
 from django.http import HttpResponse
 from asgiref.sync import sync_to_async
 
@@ -6,19 +6,27 @@ from finance.models import StockSymbol
 from finance.utils import morningstar, tdameritrade
 
 
-def _update(request):
+def _stock_symbol_update(request):
     morningstar.update()
     return HttpResponse("DONE")
 
 
-update = sync_to_async(_update)
+stock_symbol_update = sync_to_async(_stock_symbol_update)
 
 
-def _options(request):
+def _option_screen(request):
     good_stocks = StockSymbol.objects.filter(stars__gte=4)
     bad_stocks = StockSymbol.objects.filter(stars__exact=1)
     tdameritrade.option_screen(good_stocks, bad_stocks)
     return HttpResponse("DONE")
 
 
-options = sync_to_async(_options)
+option_screen = sync_to_async(_option_screen)
+
+
+def _option_update(request):
+    tdameritrade.option_update()
+    return HttpResponse("DONE")
+
+
+option_update = sync_to_async(_option_update)

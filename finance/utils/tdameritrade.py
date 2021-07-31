@@ -5,7 +5,6 @@ from math import sqrt
 from statistics import NormalDist, StatisticsError
 import time
 
-from django.core.exceptions import ObjectDoesNotExist
 import requests
 
 from finance.models import Option as ModelOption
@@ -27,7 +26,6 @@ REFRESH_TOKEN = ('eOhX6bz9AjyKiWNiJQecRmCGKby5/RcaP6oWtMinbsFXw07uwjqJIpuxFY+1p9
                  '0LfNHdjwn3MC0htyvsnzRAsbYiogXcn0ezedbYD7fZZ+r0O2aqdppaTsWq7Ev/T0DE1aPdnYJA+tvi54z1FBQqquhcNsDZ'
                  'WuQ1eMQsrTLLKX0XizNJWK1FkxO6Ig28aivUAUilxp+Py6JOPpkjza8z2MRn9tUqvLuOxdS8iLhmvYahvlxkQ3oDB1m5Q4'
                  'd2sFKzMa8Y8h9XY7LKGxlrjlmA4SrmyTTeWE6Q1SzOQ8lYtAfbKrNP4kZFpfY=212FD3x19z9sWBHDJACbC00B75E')
-
 REFRESH_TOKEN = 'eOhX6bz9AjyKiWNiJQecRmCGKby5/RcaP6oWtMinbsFXw07uwjqJIpuxFY+1p9L+ZchE6AJidd6U1aZG4HRzapxVrC2qBt/Ea1OmogCY1yf8KAqZezD1nWph530rCgZJj9DhIOLNVHjZ7y9asm5TqB4qvselui9YRbtP6oy0NPNaOh6tCskBJEapWeRgbfmTTCpXbPk9LhxAwTZzBl1vENAUyjjycA06mfugrjmpfyScfxv6sWaWdYbGbJo+f5wbhOrrl4vGbE4pO73EAFbfBA8askGkdW9F4fVekFLAKcLJrV9rruVfDbiO3iqkkLTzfRD8QZIXt14KXMa8Wv1u6a1L5Plxv5zRtnjXMg0Cepzesm4csaSdi6dQQtp/pYA7ve1AngX2DQpnisF+PdABLIrl6dlEdD+idQ5cncnwJng51RUqMLA4/U3MdFD100MQuG4LYrgoVi/JHHvlkDZPBYWiwXMZ1iba7BN/iKo3pF4tBbddOJl9TO7oJrYu+GI9LH7+LRLiO6EkV3fZlekVYkPPhQlGtyXPnFBSqvOBf7ofo+c8xFEm1hbFtwaGOk97rz2U802X9GcEGK+ARW+NKrWZwIkpo+EG52k1GgQddzvD8im9TQyj78YcJ2ZiExPvuCT2eMWh4trk8lm+lE0LfNHdjwn3MC0htyvsnzRAsbYiogXcn0ezedbYD7fZZ+r0O2aqdppaTsWq7Ev/T0DE1aPdnYJA+tvi54z1FBQqquhcNsDZWuQ1eMQsrTLLKX0XizNJWK1FkxO6Ig28aivUAUilxp+Py6JOPpkjza8z2MRn9tUqvLuOxdS8iLhmvYahvlxkQ3oDB1m5Q4d2sFKzMa8Y8h9XY7LKGxlrjlmA4SrmyTTeWE6Q1SzOQ8lYtAfbKrNP4kZFpfY=212FD3x19z9sWBHDJACbC00B75E'
 
 api_data = {'grant_type': 'refresh_token',
@@ -168,106 +166,140 @@ class Option:
             yield x, y
 
 
-def update(stock, value):
+def screen(stock, value):
     stock = Stock(stock, value)
-    today = dt.datetime.strftime(dt.datetime.now(), '%Y-%m-%d')
-    current_hour = dt.datetime.now().hour
     if value > 0:
         all_options = stock.puts.items()
-        nd = stock.normal_dist.quantiles(8)[0]
     else:
         all_options = stock.calls.items()
-        nd = stock.normal_dist.quantiles(10)[8]
 
-    cagr_mapping = {range(0, 8): 9, range(8, 15): 16, range(15, 22): 23, range(22, 29): 30, range(29, 36): 37}
     for exp_date, chain in all_options:
-        days = int(exp_date.split(':')[1])
-        cagr_days = next((cagr_mapping[d] for d in cagr_mapping if days in d), days)
-
-        # Minimum bar to pass don't clog DB with unsellable options
-        try:
-            options = [Option(o[0]) for strike, o in chain.items() if (.75 < float(strike) / stock.price < 1.25 and
-                                                                       (o[0]['ask'] - o[0]['bid']) / stock.price < .015 and
-                                                                       o[0]['bid'] > .1 and
-                                                                       o[0]['openInterest'] >= 1
-                                                                       )]
-        except AttributeError:
-            logger.warning(f'{o[0]["symbol"]} error')
-            continue
-
+        options = initial_filter(chain, stock)
         for option in options:
-            symbol = option.symbol
-            strike_percent = round((option.strikePrice / stock.price), 2)
-            profit_percent = round((option.mark / option.strikePrice / .15), 3)
-            cdf = round(stock.normal_dist.cdf(strike_percent - 1), 3)
-            pdf = round(stock.normal_dist.pdf(strike_percent - 1), 3)
-            stddev = round(stock.normal_dist.stdev, 3)
-            cagr = round(((1 + profit_percent) ** (1 / (cagr_days / 365))) - 1, 2)
-            try:
-                stock_symbol = StockSymbol.objects.get(symbol=symbol.split('_')[0])
-            except ObjectDoesNotExist:
-                symbol = symbol.split('_')[0]
-                symbol = f'{symbol[:-1]}.{symbol[-1]}'
-                stock_symbol = StockSymbol.objects.get(symbol=symbol)
-            o = dict(symbol=symbol,
-                     ticker=stock_symbol,
-                     sell=option.mark,
-                     stddev=stddev,
-                     cdf=cdf,
-                     pdf=pdf,
-                     strike_discount=strike_percent,
-                     profit_percent=profit_percent,
-                     cagr=cagr,
-                     days_to_exp=days,
-                     expired=False,
-                     strike=option.strikePrice,
-                     nd=nd)
-            o, created = screen(stock, o)
-            if created:
-                continue
-            if o['days_to_exp'] % 7 == 0:
-                ModelOption.objects.get_or_create(symbol=o['symbol'], date=today, defaults=o)
-                logger.debug(f'Added {o["symbol"]}')
-            if o['days_to_exp'] == 0 and current_hour >= 15:
-                expired = ModelOption.objects.filter(symbol=o['symbol'])
-                expired.update(expired=True)
-                if option.mark < .05:
-                    expired.update(buy=0)
-                else:
-                    expired.update(buy=option.mark)
+            data = screen_data(option, stock)
+            if value > 0:
+                data = put_screen(data)
+            else:
+                data = call_screen(data)
+            update_db(data)
 
 
-def screen(s, o):
-    nd = o.pop('nd')
-    required_strike = s.price + (s.price * (sqrt(o['days_to_exp'] / 30) * nd))
+def update_db(data):
     today = dt.datetime.strftime(dt.datetime.now(), '%Y-%m-%d')
+    if data.get('screened'):
+        ModelOption.objects.update_or_create(symbol=data['symbol'], date=today, defaults=data)
+        logger.info(f'symbol={data["symbol"]}, sell={data["sell"]} strike_discount={data["strike_discount"]}, '
+                    f'days_to_exp={data["days_to_exp"]}, cagr={data["cagr"]}')
+        return
+    if data.get('days_to_exp') & 7 == 0:
+        ModelOption.objects.get_or_create(symbol=data['symbol'], date=today, defaults=data)
+        logger.debug(f'Added {data["symbol"]}')
 
-    strike = o.pop('strike')
-    if (s.fair_value > 0 and
-            o['strike_discount'] <= .95 and
-            strike < required_strike and
-            o['cagr'] > 2.5 and
-            1 <= o['days_to_exp'] <= 35):
-        o['screened'] = True
-    if (s.fair_value == 0 and
-            1.07 <= o['strike_discount'] < 2 and
-            strike > required_strike and
-            o['cagr'] > 2.5 and
-            1 <= o['days_to_exp'] < 30):
-        o['screened'] = True
+    # if o['days_to_exp'] == 0 and current_hour >= 15:
+    #     expired = ModelOption.objects.filter(symbol=o['symbol'])
+    #     expired.update(expired=True)
+    #     if option.mark < .05:
+    #         expired.update(buy=0)
+    #     else:
+    #         expired.update(buy=option.mark)
 
-    if o.get('screened'):
-        _, created = ModelOption.objects.update_or_create(symbol=o['symbol'], date=today, defaults=o)
-        logger.info(f'symbol={o["symbol"]}, sell={o["sell"]} strike_discount={o["strike_discount"]}, '
-                    f'profit_percent={o["profit_percent"]}, days_to_exp={o["days_to_exp"]} - {o["cagr"]}')
-    else:
-        created = False
 
-    return o, created
+def calc_cagr(rate, days):
+    cagr_mapping = {range(0, 8): 9, range(8, 15): 16, range(15, 22): 23, range(22, 29): 30, range(29, 36): 37}
+    cagr_days = next((cagr_mapping[d] for d in cagr_mapping if days in d), days)
+    return round(((1 + rate) ** (1 / (cagr_days / 365))) - 1, 2)
+
+
+def initial_filter(chain, stock):
+    # Minimum bar to pass don't clog DB with unsellable options
+    try:
+        options = (Option(o[0]) for strike, o in chain.items() if (.75 < float(strike) / stock.price < 1.25 and
+                                                                   (o[0]['ask'] - o[0]['bid']) / stock.price < .015 and
+                                                                   o[0]['bid'] > .1 and
+                                                                   o[0]['openInterest'] >= 1
+                                                                   ))
+    except AttributeError:
+        logger.warning(f'{stock.symbol} error')
+        return []
+    return options
+
+
+def screen_data(option, stock):
+    stock_symbol = StockSymbol.objects.get(symbol=stock.symbol)
+    strike_discount = round((option.strikePrice / stock.price), 2)
+    profit_percent = round((option.mark / option.strikePrice / .15), 3)
+    cdf = round(stock.normal_dist.cdf(sqrt(30 / option.daysToExpiration) * (strike_discount - 1)), 2)
+    pdf = round(stock.normal_dist.pdf(sqrt(30 / option.daysToExpiration) * (strike_discount - 1)), 2)
+    stddev = round(stock.normal_dist.stdev, 3)
+    cagr = calc_cagr(profit_percent, option.daysToExpiration)
+    return {'ticker': stock_symbol,
+            'symbol': option.symbol,
+            'strike_discount': strike_discount,
+            'profit_percent': profit_percent,
+            'cdf': cdf,
+            'pdf': pdf,
+            'stddev': stddev,
+            'cagr': cagr,
+            'sell': option.mark,
+            'days_to_exp': option.daysToExpiration,
+            'strike_price': option.strikePrice,
+            'nd': stock.normal_dist,
+            'current_price': stock.price
+            }
+
+
+def put_screen(data):
+    nd = data.pop('nd').quantiles(8)[0]
+    current_price = data.pop('current_price')
+    required_strike = current_price + (current_price * (sqrt(data['days_to_exp'] / 30) * nd))
+    strike_price = data.pop('strike_price')
+
+    if (data['strike_discount'] <= .95 and
+            strike_price < required_strike and
+            data['cagr'] > 2.5 and
+            1 <= data['days_to_exp'] <= 35):
+        data['screened'] = True
+    return data
+
+
+def call_screen(data):
+    nd = data.pop('nd').quantiles(8)[6]
+    current_price = data.pop('current_price')
+    required_strike = current_price + (current_price * (sqrt(data['days_to_exp'] / 30) * nd))
+    strike_price = data.pop('strike_price')
+
+    if (1.07 <= data['strike_discount'] < 2 and
+            strike_price > required_strike and
+            data['cagr'] > 2.5 and
+            1 <= data['days_to_exp'] < 21):
+        data['screened'] = True
+    return data
 
 
 def option_screen(good_stocks, bad_stocks):
     for stock in good_stocks:
-        update(stock.symbol, stock.fair_value)
+        screen(stock.symbol, stock.fair_value)
     for stock in bad_stocks:
-        update(stock.symbol, 0)
+        screen(stock.symbol, 0)
+
+
+def option_update():
+    today = dt.datetime.strftime(dt.datetime.now(), '%m%d%y')
+    options = ModelOption.objects.filter(expired=False, symbol__contains=today)
+    stock_symbols = options.values('ticker').distinct()
+
+    for stock_symbol in stock_symbols:
+        stock_symbol = stock_symbol['ticker']
+        stock = Stock(stock_symbol, 0)
+        for exp_date, chain in stock.calls.items():
+            if int(exp_date.split(':')[1]) == 0:
+                for _, option in chain.items():
+                    buy_price = option[0]['mark'] if option[0]['mark'] >= .07 else 0
+                    ModelOption.objects.filter(symbol=option[0]["symbol"]).update(expired=True, buy=buy_price)
+                    logger.debug(f'Expired {option[0]["symbol"]}')
+        for exp_date, chain in stock.puts.items():
+            if int(exp_date.split(':')[1]) == 0:
+                for _, option in chain.items():
+                    buy_price = option[0]['mark'] if option[0]['mark'] >= .07 else 0
+                    ModelOption.objects.filter(symbol=option[0]["symbol"]).update(expired=True, buy=buy_price)
+                    logger.debug(f'Expired {option[0]["symbol"]}')

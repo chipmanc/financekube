@@ -32,46 +32,46 @@ from finance.models import Option
 class TDTestCase(TestCase):
     fixtures = ['options']
 
-    @patch('tdameritrade.requests.get')  # , return_value=MockResponse())
+    @patch('finance.utils.tdameritrade.requests.get')  # , return_value=MockResponse())
     def test_td_stock_basic_data(self, requests):
         pass
 
-    @patch('tdameritrade.requests.get')  # , return_value=MockResponse())
+    @patch('finance.utils.tdameritrade.requests.get')  # , return_value=MockResponse())
     def test_td_stock_stddev(self, requests):
         pass
 
-    @patch('tdameritrade.requests.get')  # , return_value=MockResponse())
+    @patch('finance.utils.tdameritrade.requests.get')  # , return_value=MockResponse())
     def test_td_stock_option_chain(self, requests):
         pass
 
-    @patch('tdameritrade.requests.get')  # , return_value=MockResponse())
+    @patch('finance.utils.tdameritrade.requests.get')  # , return_value=MockResponse())
     def test_td_update_initial_filter(self, requests):
         pass
 
-    @patch('tdameritrade.requests.get')  # , return_value=MockResponse())
+    @patch('finance.utils.tdameritrade.requests.get')  # , return_value=MockResponse())
     def test_td_update_put_good(self, requests):
         pass
 
-    @patch('tdameritrade.requests.get')  # , return_value=MockResponse())
+    @patch('finance.utils.tdameritrade.requests.get')  # , return_value=MockResponse())
     def test_td_update_put_nogood_friday(self, requests):
         pass
 
-    @patch('tdameritrade.requests.get')  # , return_value=MockResponse())
+    @patch('finance.utils.tdameritrade.requests.get')  # , return_value=MockResponse())
     def test_td_update_put_nogood_monday(self, requests):
         pass
 
-    @patch('tdameritrade.requests.get')  # , return_value=MockResponse())
+    @patch('finance.utils.tdameritrade.requests.get')  # , return_value=MockResponse())
     def test_td_update_call_good(self, requests):
         pass
 
-    @patch('tdameritrade.requests.get')  # , return_value=MockResponse())
+    @patch('finance.utils.tdameritrade.requests.get')  # , return_value=MockResponse())
     def test_td_update_call_nogood_friday(self, requests):
         pass
 
-    @patch('tdameritrade.requests.get')  # , return_value=MockResponse())
+    @patch('finance.utils.tdameritrade.requests.get')  # , return_value=MockResponse())
     def test_td_update_call_nogood_monday(self, requests):
         pass
 
-    @patch('tdameritrade.requests.get')  # , return_value=MockResponse())
+    @patch('finance.utils.tdameritrade.requests.get')  # , return_value=MockResponse())
     def test_td_update_expired(self, requests):
         pass
