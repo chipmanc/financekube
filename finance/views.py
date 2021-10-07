@@ -7,7 +7,8 @@ from finance.utils import morningstar, tdameritrade
 
 
 def _stock_symbol_update(request):
-    morningstar.update()
+    ms = morningstar.Morningstar()
+    ms.update()
     return HttpResponse("DONE")
 
 

@@ -72,6 +72,7 @@ class TDTestCase(TestCase):
     def test_td_update_call_nogood_monday(self, requests):
         pass
 
-    @patch('finance.utils.tdameritrade.requests.get')  # , return_value=MockResponse())
-    def test_td_update_expired(self, requests):
+    @patch('finance.utils.tdameritrade.ModelOption')
+    @patch('finance.utils.tdameritrade.Stock')
+    def test_td_update_expired(self, option, stock):
         pass

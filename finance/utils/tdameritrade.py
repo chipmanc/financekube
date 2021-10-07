@@ -26,7 +26,7 @@ REFRESH_TOKEN = ('eOhX6bz9AjyKiWNiJQecRmCGKby5/RcaP6oWtMinbsFXw07uwjqJIpuxFY+1p9
                  '0LfNHdjwn3MC0htyvsnzRAsbYiogXcn0ezedbYD7fZZ+r0O2aqdppaTsWq7Ev/T0DE1aPdnYJA+tvi54z1FBQqquhcNsDZ'
                  'WuQ1eMQsrTLLKX0XizNJWK1FkxO6Ig28aivUAUilxp+Py6JOPpkjza8z2MRn9tUqvLuOxdS8iLhmvYahvlxkQ3oDB1m5Q4'
                  'd2sFKzMa8Y8h9XY7LKGxlrjlmA4SrmyTTeWE6Q1SzOQ8lYtAfbKrNP4kZFpfY=212FD3x19z9sWBHDJACbC00B75E')
-REFRESH_TOKEN = 'eOhX6bz9AjyKiWNiJQecRmCGKby5/RcaP6oWtMinbsFXw07uwjqJIpuxFY+1p9L+ZchE6AJidd6U1aZG4HRzapxVrC2qBt/Ea1OmogCY1yf8KAqZezD1nWph530rCgZJj9DhIOLNVHjZ7y9asm5TqB4qvselui9YRbtP6oy0NPNaOh6tCskBJEapWeRgbfmTTCpXbPk9LhxAwTZzBl1vENAUyjjycA06mfugrjmpfyScfxv6sWaWdYbGbJo+f5wbhOrrl4vGbE4pO73EAFbfBA8askGkdW9F4fVekFLAKcLJrV9rruVfDbiO3iqkkLTzfRD8QZIXt14KXMa8Wv1u6a1L5Plxv5zRtnjXMg0Cepzesm4csaSdi6dQQtp/pYA7ve1AngX2DQpnisF+PdABLIrl6dlEdD+idQ5cncnwJng51RUqMLA4/U3MdFD100MQuG4LYrgoVi/JHHvlkDZPBYWiwXMZ1iba7BN/iKo3pF4tBbddOJl9TO7oJrYu+GI9LH7+LRLiO6EkV3fZlekVYkPPhQlGtyXPnFBSqvOBf7ofo+c8xFEm1hbFtwaGOk97rz2U802X9GcEGK+ARW+NKrWZwIkpo+EG52k1GgQddzvD8im9TQyj78YcJ2ZiExPvuCT2eMWh4trk8lm+lE0LfNHdjwn3MC0htyvsnzRAsbYiogXcn0ezedbYD7fZZ+r0O2aqdppaTsWq7Ev/T0DE1aPdnYJA+tvi54z1FBQqquhcNsDZWuQ1eMQsrTLLKX0XizNJWK1FkxO6Ig28aivUAUilxp+Py6JOPpkjza8z2MRn9tUqvLuOxdS8iLhmvYahvlxkQ3oDB1m5Q4d2sFKzMa8Y8h9XY7LKGxlrjlmA4SrmyTTeWE6Q1SzOQ8lYtAfbKrNP4kZFpfY=212FD3x19z9sWBHDJACbC00B75E'
+REFRESH_TOKEN = 'qe78H73fVUr0TAdBpJHRoAAzKEDAteF3W4p3MC5DqVKpJ9ywfajF8pIXNZSok30OraOi/atdDKmuvr48pa6/mk8rqPnp5aSzhoxLpZx3vJKr+fNia4LWwSSDaOPo8Bp/Q2FK9lQN2krWWSPqf7FTqFwOHKqkCkU/jvd6UM95GpA8R6AT6h1saiU1K9hXAn40+qbXI9UdlyFSKwDF3/DlfOZZ+BTkPT8IUw+RjH3zRWA1KIFqR7Nql9uoAOVFjq4ZLKA8141i2IvNvogipbfI5vg4nGY+g2pRft1Ke06WuAg65tTq3fcQ/C+EAdWNvthVXZTFdtP1MZ2woWRA7O2gK9Y9ZuxfENq6VhCqK8k/JB7qF2fyVfj4+DKhpBfzHfwSb3VVwKx+AokDbmwCDSZazkxAr3ZYftbK7KzKObvVhGqwJGAoXjfgEF8p07K100MQuG4LYrgoVi/JHHvlpHSPKuvGMZGhiKRm7z+SAlEblkyLp7A4u3Bu2/wVTGABSILC6WgYd85jP1CQwPKFDNeMAcp5xYWc/a6Me1Efv+wUg8PJHQviqQP/UweYic0zYIdDKkJVtqOzG7srKs4QFSLR/NFkUClT/GQ8lqzwdeinU4vaZcbnW/DCOtgWaOeg6TtHq6Zag5vHBB1KeKmy2o40RlGljwtuK+spKKW8tDPV3gTYQdWQoz4dho2RqyKWmTnXrSUgvOwwbGiliotXQQ7l629r35N0hU5qjubhOV56nvVI+W8ieQfW4GNrl+zYNSYY7COzUHO56C5XqDYS4a8KzCE5wa+ax8kIwhSn/jl5iogAC6QUFbn/mXcgdAy1+2d3KYZj9vTxG2bXYgHFI30W7w1+skUNTKTGzDLdGo09GB5HQDAD4kWEoMH/OSkDRwDBgZ6/A+7FZnU=212FD3x19z9sWBHDJACbC00B75E'
 
 api_data = {'grant_type': 'refresh_token',
             'refresh_token': REFRESH_TOKEN,
@@ -46,6 +46,9 @@ TOKEN = get_token()
 
 class Stock:
     def __init__(self, symbol, fair_value, end_days=65):
+        time.sleep(.12)
+        print(symbol)
+        self.token = get_token()
         self.account_id = ACCOUNT_ID
         self.base_url = 'https://api.tdameritrade.com/v1/marketdata/'
         self.symbol = symbol.upper()
@@ -59,8 +62,8 @@ class Stock:
         self.normal_dist = self._get_standard_deviation()
 
     def _get_basic_data(self):
-        time.sleep(.3)
-        headers = {"Authorization": TOKEN}
+        time.sleep(.11)
+        headers = {"Authorization": self.token}
         path_param = f'{self.symbol}/quotes'
         resp = json.loads(requests.get(self.base_url + path_param, headers=headers).text)
         try:
@@ -71,8 +74,8 @@ class Stock:
             print(f'{self.symbol} - KeyError - {resp}')
 
     def _get_standard_deviation(self, period_type='year', periods='1'):
-        time.sleep(.3)
-        headers = {"Authorization": TOKEN}
+        time.sleep(.11)
+        headers = {"Authorization": self.token}
         path_params = (f'{self.symbol}/pricehistory?'
                        f'periodType={period_type}&'
                        f'period={periods}&'
@@ -94,8 +97,8 @@ class Stock:
     def _get_option_chain(self, start_date, end_date,
                           contract_type='ALL', strike_range='ALL',
                           option_type='S'):
-        time.sleep(.3)
-        headers = {"Authorization": TOKEN}
+        time.sleep(.11)
+        headers = {"Authorization": self.token}
         path_params = (f'chains?'
                        f'symbol={self.symbol}&'
                        f'contractType={contract_type}&'
@@ -191,17 +194,10 @@ def update_db(data):
         logger.info(f'symbol={data["symbol"]}, sell={data["sell"]} strike_discount={data["strike_discount"]}, '
                     f'days_to_exp={data["days_to_exp"]}, cagr={data["cagr"]}')
         return
-    if data.get('days_to_exp') & 7 == 0:
+    if data.get('days_to_exp') % 7 == 0:
         ModelOption.objects.get_or_create(symbol=data['symbol'], date=today, defaults=data)
         logger.debug(f'Added {data["symbol"]}')
-
-    # if o['days_to_exp'] == 0 and current_hour >= 15:
-    #     expired = ModelOption.objects.filter(symbol=o['symbol'])
-    #     expired.update(expired=True)
-    #     if option.mark < .05:
-    #         expired.update(buy=0)
-    #     else:
-    #         expired.update(buy=option.mark)
+        return
 
 
 def calc_cagr(rate, days):
@@ -213,7 +209,7 @@ def calc_cagr(rate, days):
 def initial_filter(chain, stock):
     # Minimum bar to pass don't clog DB with unsellable options
     try:
-        options = (Option(o[0]) for strike, o in chain.items() if (.75 < float(strike) / stock.price < 1.25 and
+        options = (Option(o[0]) for strike, o in chain.items() if (.7 < float(strike) / stock.price < 1.3 and
                                                                    (o[0]['ask'] - o[0]['bid']) / stock.price < .015 and
                                                                    o[0]['bid'] > .1 and
                                                                    o[0]['openInterest'] >= 1
@@ -225,13 +221,17 @@ def initial_filter(chain, stock):
 
 
 def screen_data(option, stock):
+    if option.daysToExpiration == 0:
+        days = 1
+    else:
+        days = option.daysToExpiration
     stock_symbol = StockSymbol.objects.get(symbol=stock.symbol)
     strike_discount = round((option.strikePrice / stock.price), 2)
     profit_percent = round((option.mark / option.strikePrice / .15), 3)
-    cdf = round(stock.normal_dist.cdf(sqrt(30 / option.daysToExpiration) * (strike_discount - 1)), 2)
-    pdf = round(stock.normal_dist.pdf(sqrt(30 / option.daysToExpiration) * (strike_discount - 1)), 2)
+    cdf = round(stock.normal_dist.cdf(sqrt(30 / days) * (strike_discount - 1)), 3)
+    pdf = round(stock.normal_dist.pdf(sqrt(30 / days) * (strike_discount - 1)), 3)
     stddev = round(stock.normal_dist.stdev, 3)
-    cagr = calc_cagr(profit_percent, option.daysToExpiration)
+    cagr = calc_cagr(profit_percent, days)
     return {'ticker': stock_symbol,
             'symbol': option.symbol,
             'strike_discount': strike_discount,
@@ -244,17 +244,19 @@ def screen_data(option, stock):
             'days_to_exp': option.daysToExpiration,
             'strike_price': option.strikePrice,
             'nd': stock.normal_dist,
-            'current_price': stock.price
+            'current_price': stock.price,
+            'calculation_days': days
             }
 
 
 def put_screen(data):
+    days = data.pop('calculation_days')
     nd = data.pop('nd').quantiles(8)[0]
     current_price = data.pop('current_price')
-    required_strike = current_price + (current_price * (sqrt(data['days_to_exp'] / 30) * nd))
+    required_strike = current_price + (current_price * (sqrt(days / 30) * nd))
     strike_price = data.pop('strike_price')
 
-    if (data['strike_discount'] <= .95 and
+    if (data['strike_discount'] <= .92 and
             strike_price < required_strike and
             data['cagr'] > 2.5 and
             1 <= data['days_to_exp'] <= 35):
@@ -263,15 +265,16 @@ def put_screen(data):
 
 
 def call_screen(data):
-    nd = data.pop('nd').quantiles(8)[6]
+    days = data.pop('calculation_days')
+    nd = data.pop('nd').quantiles(9)[7]
     current_price = data.pop('current_price')
-    required_strike = current_price + (current_price * (sqrt(data['days_to_exp'] / 30) * nd))
+    required_strike = current_price + (current_price * (sqrt(days / 30) * nd))
     strike_price = data.pop('strike_price')
 
-    if (1.07 <= data['strike_discount'] < 2 and
+    if (1.08 <= data['strike_discount'] < 2 and
             strike_price > required_strike and
-            data['cagr'] > 2.5 and
-            1 <= data['days_to_exp'] < 21):
+            data['cagr'] > 3 and
+            1 <= data['days_to_exp'] < 25):
         data['screened'] = True
     return data
 
@@ -285,21 +288,23 @@ def option_screen(good_stocks, bad_stocks):
 
 def option_update():
     today = dt.datetime.strftime(dt.datetime.now(), '%m%d%y')
-    options = ModelOption.objects.filter(expired=False, symbol__contains=today)
-    stock_symbols = options.values('ticker').distinct()
-
-    for stock_symbol in stock_symbols:
-        stock_symbol = stock_symbol['ticker']
-        stock = Stock(stock_symbol, 0)
-        for exp_date, chain in stock.calls.items():
-            if int(exp_date.split(':')[1]) == 0:
-                for _, option in chain.items():
-                    buy_price = option[0]['mark'] if option[0]['mark'] >= .07 else 0
-                    ModelOption.objects.filter(symbol=option[0]["symbol"]).update(expired=True, buy=buy_price)
-                    logger.debug(f'Expired {option[0]["symbol"]}')
-        for exp_date, chain in stock.puts.items():
-            if int(exp_date.split(':')[1]) == 0:
-                for _, option in chain.items():
-                    buy_price = option[0]['mark'] if option[0]['mark'] >= .07 else 0
-                    ModelOption.objects.filter(symbol=option[0]["symbol"]).update(expired=True, buy=buy_price)
-                    logger.debug(f'Expired {option[0]["symbol"]}')
+    options = ModelOption.objects.filter(expired=False, symbol__contains=today).order_by('symbol')
+    symbol = ''
+    for option in options:
+        if option.ticker.symbol != symbol:
+            symbol = option.ticker.symbol
+            stock = Stock(symbol, 0)
+        dts = option.symbol.split('_')[1]
+        if 'C' in dts:
+            strike = float(dts.split('C')[1])
+            if stock.price > strike:
+                mark = round(stock.price - strike, 2)
+            else:
+                mark = 0.0
+        elif 'P' in dts:
+            strike = float(dts.split('P')[1])
+            if stock.price > strike:
+                mark = 0.0
+            else:
+                mark = round(strike - stock.price, 2)
+        ModelOption.objects.filter(symbol=option.symbol).update(expired=True, buy=mark)
