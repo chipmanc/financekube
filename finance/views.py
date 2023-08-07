@@ -15,10 +15,17 @@ def _stock_symbol_update(request):
 stock_symbol_update = sync_to_async(_stock_symbol_update)
 
 
-def _option_screen(request):
-    good_stocks = StockSymbol.objects.filter(stars__gte=4)
-    bad_stocks = StockSymbol.objects.filter(stars__exact=1)
-    tdameritrade.option_screen(good_stocks, bad_stocks)
+def _option_screen(request, symbol=None):
+    if symbol:
+        symbol = StockSymbol.objects.get(symbol__exact=symbol)
+        if symbol.stars >= 4:
+            tdameritrade.option_screen([symbol], [])
+        else:
+            tdameritrade.option_screen([], [symbol])
+    else:
+        good_stocks = StockSymbol.objects.filter(stars__gte=4).order_by('symbol')
+        bad_stocks = StockSymbol.objects.filter(stars__exact=1).order_by('symbol')
+        tdameritrade.option_screen(good_stocks, bad_stocks)
     return HttpResponse("DONE")
 
 

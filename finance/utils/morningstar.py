@@ -4,6 +4,7 @@ import time
 
 from django.core.exceptions import FieldError, ObjectDoesNotExist
 from selenium import webdriver
+from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.options import Options
 
 from finance.models import StockSymbol
@@ -15,7 +16,7 @@ class Morningstar:
     def __init__(self):
         chrome_options = Options()
         chrome_options.add_argument('--headless')
-        self.browser = webdriver.Chrome(options=chrome_options)
+        self.browser = webdriver.Chrome(options=chrome_options, executable_path='/usr/local/bin/chromedriver')
 
     def login(self):
         """
@@ -86,7 +87,7 @@ class Morningstar:
 
     def get_valuation(self, ticker, link):
         print(f'Getting valuation for {ticker}')
-        fv = self.fair_value(link)
+        fv = self.fair_value(ticker, link)
         if fv:
             data = {'symbol': ticker,
                     'fair_value': fv,
@@ -109,24 +110,28 @@ class Morningstar:
             except ValueError:
                 print(f'{ticker} - Value Error')
 
-
-    def fair_value(self, link):
+    def fair_value(self, ticker, link):
         """
         Return Morningstar Fair Value estimate for given symbol.
         """
         if link != self.browser.current_url:
             self.browser.get(link)
-            time.sleep(3)
-        fields = self.browser.find_elements_by_tag_name('tspan')
+            time.sleep(3.2)
+        if self.browser.find_elements_by_class_name('mdc-stock-analysis-view__body-report-article--quant'):
+            print(f'Skipping {ticker} because "Q" value')
+            return
         try:
-            if fields[2].text in ['', 'Q']:
-                return
-            else:
-                fv = fields[2].text
-                fv = fv.replace(',', '')
-                fv = float(fv)
+            class_name = 'mdc-valuation-capsule-indicator__scale-tip-fair-value'
+            try:
+                div = self.browser.find_element_by_class_name(f'{class_name}--bottom')
+            except NoSuchElementException:
+                div = self.browser.find_element_by_class_name(f'{class_name}--top')
+            fields = div.find_elements_by_class_name('mdc-data-point--number')
+            fv = fields[0].text
+            fv = fv.replace(',', '')
+            fv = float(fv)
             return fv
-        except IndexError:
+        except (IndexError, NoSuchElementException):
             return
 
     def uncertainty_rating(self, link):
@@ -136,11 +141,8 @@ class Morningstar:
         if link != self.browser.current_url:
             self.browser.get(link)
             time.sleep(2.5)
-        try:
-            fields = self.browser.find_elements_by_tag_name('tspan')
-            uncertainty = fields[3].text.split(':')[1]
-        except IndexError:
-            uncertainty = 'Very'
+        fields = self.browser.find_elements_by_class_name('mdc-data-point--string')
+        uncertainty = fields[4].text
         return uncertainty
 
     def star_rating(self, link):
@@ -150,6 +152,5 @@ class Morningstar:
         if link != self.browser.current_url:
             self.browser.get(link)
             time.sleep(2.5)
-        stars = self.browser.find_element_by_class_name('mdc-security-header__star-rating')
-        stars = len(stars.find_elements_by_tag_name('svg'))
+        stars = len(self.browser.find_elements_by_class_name('mdc-security-header__star'))
         return stars

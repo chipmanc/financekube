@@ -23,5 +23,5 @@ class Option(models.Model):
     cagr = models.FloatField(default=None)
     days_to_exp = models.PositiveSmallIntegerField()
     screened = models.BooleanField(default=False)
-    sold = models.BooleanField(default=False)
+    sold = models.PositiveSmallIntegerField(null=True)
     expired = models.BooleanField(default=False)

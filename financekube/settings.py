@@ -78,7 +78,7 @@ DATABASES = {
         'NAME': 'finance',
         'USER': 'chrichip',
         'PASSWORD': 'supersecretpassword',
-        'HOST': '192.168.1.101',
+        'HOST': '127.0.0.1',
         'CONN_MAX_AGE': 5
     }
 }
