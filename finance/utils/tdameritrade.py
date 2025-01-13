@@ -16,19 +16,18 @@ ACCOUNT_ID = '275270616'
 ACCESS_TYPE = 'offline'  # Use if need a new refresh token
 CLIENT_ID = 'TVTMGKIMONGROXTMOXA13OSZGV5EY4BU'
 REDIRECT_URI = 'http://127.0.0.1'
-REFRESH_TOKEN = ('HhatTzq1ZH0epCwOGQs5ceOGYsdI6aAyWhVeaRR06HsHw91VtLpDirUGqdTgaSqR6eQbCeozdIaigv0r'
-                 '7hpc6zK/PTbpZStkiCtdLTVZlpVu9v6elFLDXEgPDC+xESw0cxwNTeeT3VTkHfV7KWtZJH1fc99kch7P'
-                 'ixon+Z8PXR9ZBFAlxOBd+TzHd2Djg7YeI3TNQoZSsI8Yn75LxAL0wkVoSFomIMo7niYpDfRyfmMQqr+p'
-                 'QA7oHDK+G/m2w68+QogbarKOaCfNBxk1fPDw6/o8V6gYapIYzAtVMdvGQURJe9+t1sM8WnUcrHbtqK5M'
-                 'l7ekCCZvhCftWn6B0PmwhDavMpo6uNI2u0TKzgrwwtdFPEXssVFx4JYpHxGLu5ERCUc0KCMkGIcIWUrq'
-                 'F2yi1GRpakP7RqRuEgP+BNWeoDbF+nZ2nrHX+kG1u84100MQuG4LYrgoVi/JHHvllFPTTaniXjIfJD3f'
-                 'hp8iIZyeJn7b3qr4AvxDwDEbGkRFHEKLttCyp/liMIP9BP0llXRvvX8kC7VRH2xpq6bPWocMB/Kn7j/s'
-                 'c6q3xcmhNoIQWX3lseOQOJwa4ohgNgg+aSsr/i6X/v6tZdthhZXromhfxJctgVSMRTC5K9BZBrGRzgQo'
-                 '5f/2FrTGFFoktXbA8vpNyn2BV2JHS/16iOCpWKv7Wd4tzx5bKZ+/4LgG/M+udySZDXcdXPMr7MYFTAY7'
-                 'PxyI4jmnPxUGyL+9WU+k9pi1iMKUPU6NglPl1wDJkhffP8bD2UdnMqoQW9jTAN/8WJnqso9X7hrbG2WN'
-                 'NTB16zjeLUv0Jnnz9O8IPEz/C0zBWI4mzQo2+Vmb29YHrME3SBgb7l0w89Anf6FLFpZZbLhgNOnGfc+m'
-                 'dkUzrEon9qYfjOb879cf7EZDe2M=212FD3x19z9sWBHDJACbC00B75E')
-
+REFRESH_TOKEN = ('vWLKWSu5CIAhws7eS0x60fM1fJrIH9rpsrYBCQtfXhwQSwBdL0XQe6QDMkGPOdZZHkEFwus9kqRVlhyT'
+                 'AZP/IMGJRCDGiXBZ/oDfPWYLhoqVFo05nhfR8zLkHnZctLkErEiYeaR1BYUZ26EP+sLtDMBlWN+1DT8R'
+                 '7a9I5gtFQkQKlWU5Va819udA9isUay7NQhFEQIZz5kGX4DfepChFt7ymYdveadIj7xtgaanO6pyAQJUE'
+                 'BPBzdnqOlUmDmMri4BP9Pn7p5/xU4cTPGvILvtm/ggMl84OSLFqlr3PPUIh58G1V0trW2Uud5gX1uTLR'
+                 'W8T8BRRAe76sxi6IEKeO5SRRq5xIUtg9sMIgmwkwu08CWDGvZ6KV4HvYKslOIzDjy/2+7myyPx63BHG6'
+                 'g5N6SNdZ2iRecK8TyWrmx/v+p7ka8KOP9Z4fQam9l4/100MQuG4LYrgoVi/JHHvlHp6Ykoa9jlzOAgTJ'
+                 'QFaHsBb471+5Hp1Z3CIL89EGxToINneJ9/C1lmuqv+x81SWVhVeXBFkl4QiuwJhfnDN/U+vzXA8U/xcc'
+                 'am7S6Nk7FWBdmg6hJEZQfSAiXo0mj1mffPWrBRGVsiKs4KinA+XKJv39GQRPWZ63vpq1o40LPb6dD146'
+                 'JKv9Ew5eqezLdGSv6DZhyGTSGe06jS1+r0mO4FhnSGmE8w1nBd+OugR1cbax3Bxz06TD/qESaKVPvZa5'
+                 'pSEyQ156DeXgpgFxNh3QKBW4T0hTRIBXzpRxZtR30Q4X+fEAD++Iae0QIuarAbnzdgYlEDnL42a1Auz0'
+                 'f/8OEucJWJQdHPXw+uzZTStHTczM4lybwjKM4edDHKhLZxLji/DBFTfdRkAdLl1FOcHC040z6htT1wO/'
+                 '4Pe+ZFk5/19Rt7x+zvUolx5n2ic=212FD3x19z9sWBHDJACbC00B75E')
 api_data = {'grant_type': 'refresh_token',
             'refresh_token': REFRESH_TOKEN,
             'client_id': CLIENT_ID,
@@ -41,11 +40,14 @@ def get_token():
     token = f'{token["token_type"]} {token["access_token"]}'
     return token
 
+
 class Token:
     def __get__(self, instance, owner):
         pass
+
     def __set__(self, instance, value):
         pass
+
 
 class Stock:
     token = get_token()
@@ -78,7 +80,7 @@ class Stock:
             self.dividend = float(resp[self.symbol]['divAmount'])
             self.dividend_yield = float(resp[self.symbol]['divYield'])
         except KeyError:
-            # self.reset_token()
+            self.reset_token()
             try:
                 self._get_basic_data()
             except RecursionError:
@@ -91,7 +93,10 @@ class Stock:
                        f'periodType={period_type}&'
                        f'period={periods}&'
                        f'frequencyType=monthly')
-        resp = json.loads(requests.get(self.base_url + path_params, headers=headers).text)
+        try:
+            resp = json.loads(requests.get(self.base_url + path_params, headers=headers).text)
+        except json.JSONDecodeError:
+            logger.error(f'{self.symbol} - Could not read {self.base_url}{path_params}')
         try:
             nd = NormalDist.from_samples([(x['close'] - x['open']) / x['open'] for x in resp['candles']])
             return nd
@@ -121,6 +126,12 @@ class Stock:
         puts = resp.get('putExpDateMap')
         calls = resp.get('callExpDateMap')
         return puts, calls
+
+
+def trade_requirement(option, price):
+    option1 = ((.2 * price * 100) + ((option.strikePrice - price) * 100) + option.mark * 100)
+    option2 = (.1 * option.strikePrice * 100) + option.mark * 100
+    return max(option1, option2)
 
 
 def place_order(symbol1, symbol2, price):
@@ -230,7 +241,7 @@ def initial_filter(chain, stock):
     try:
         for strike, o in chain.items():
             if (.7 < float(strike) / stock.price < 1.35 and
-                    (o[0]['ask'] - o[0]['bid']) / stock.price < .014 and
+                    (o[0]['ask'] - o[0]['bid']) / stock.price < .015 and
                     o[0]['bid'] > .1 and
                     o[0]['ask'] > .1 and
                     o[0]['openInterest'] >= 1):
@@ -249,7 +260,8 @@ def screen_data(option, stock):
     try:
         stock_symbol = StockSymbol.objects.get(symbol=stock.symbol)
         strike_discount = round((option.strikePrice / stock.price), 2)
-        profit_percent = round((option.mark / option.strikePrice / .15), 3)
+        # profit_percent = round((option.mark / option.strikePrice / .15), 3)
+        profit_percent = round((option.mark * 100) / trade_requirement(option, stock.price), 3)
         cdf = round(stock.normal_dist.cdf(sqrt(30 / days) * (strike_discount - 1)), 3)
         pdf = round(stock.normal_dist.pdf(sqrt(30 / days) * (strike_discount - 1)), 3)
         stddev = round(stock.normal_dist.stdev, 3)
@@ -284,7 +296,7 @@ def put_screen(data):
 
     if (data['strike_discount'] <= .92 and
             strike_price < required_strike and
-            data['cagr'] > 2.25 and
+            data['cagr'] > 2 and
             5 <= data['days_to_exp'] <= 35):
         data['screened'] = True
     return data
@@ -345,3 +357,6 @@ def option_update():
             logger.error("Attribute Error")
         ModelOption.objects.bulk_update(bulk_options, ['expired', 'buy'], batch_size=100)
         bulk_options.clear()
+
+if __name__ == '__main__':
+    pass

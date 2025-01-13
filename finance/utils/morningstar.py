@@ -1,10 +1,11 @@
+from datetime import date, timedelta
 import logging
 import os
 import time
 
 from django.core.exceptions import FieldError, ObjectDoesNotExist
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, InvalidArgumentException
 from selenium.webdriver.chrome.options import Options
 
 from finance.models import StockSymbol
@@ -16,7 +17,7 @@ class Morningstar:
     def __init__(self):
         chrome_options = Options()
         chrome_options.add_argument('--headless')
-        self.browser = webdriver.Chrome(options=chrome_options, executable_path='/usr/local/bin/chromedriver')
+        self.browser = webdriver.Chrome(options=chrome_options)
 
     def login(self):
         """
@@ -27,17 +28,26 @@ class Morningstar:
         url = 'https://www.morningstar.com/sign-in'
         self.browser.get(url)
         time.sleep(3)
-        self.browser.find_element_by_id('emailInput').send_keys(username)
-        self.browser.find_element_by_id('passwordInput').send_keys(password)
-        button = self.browser.find_element_by_class_name('mds-button--primary___ctrsi')
+        self.browser.find_element('id', 'emailInput').send_keys(username)
+        self.browser.find_element('id', 'passwordInput').send_keys(password)
+        button = self.browser.find_element('class name', 'mds-button--primary___ctrsi')
         button.click()
         time.sleep(3)
 
     def update(self):
         self.login()
         current_stocks = StockSymbol.objects.all()
+        days_to_ignore = []
+        today = date.today()
+        for x in range(10):
+            days_to_ignore.append(today - timedelta(days=x))
+            days_to_ignore.append(today + timedelta(days=x))
+
         for x in current_stocks:
-            self.get_valuation(x.symbol, x.link)
+            if x.update_date not in days_to_ignore:
+                self.get_valuation(x.symbol, x.link)
+            else:
+                continue
 
         urls = ['https://www.morningstar.com/1-star-stocks',
                 'https://www.morningstar.com/4-star-stocks',
@@ -58,26 +68,26 @@ class Morningstar:
             self.browser.get(url)
 
             # Append to list of urls if more than one page of results
-            pages = self.browser.find_elements_by_class_name('mds-pagination__item')
+            pages = self.browser.find_elements('class name', 'mds-pagination__item')
             for page in pages:
-                url_link = page.find_element_by_tag_name('a').get_attribute('href')
+                url_link = page.find_element('tag name', 'a').get_attribute('href')
                 if url_link in urls:
                     continue
                 else:
                     urls.append(url_link)
 
             # Table rows will be tagged either 'tr' or 'mdc-table-row'
-            table_rows = self.browser.find_elements_by_tag_name('tr')
+            table_rows = self.browser.find_elements('tag name', 'tr')
             if len(table_rows) == 0:
-                table_rows = self.browser.find_elements_by_class_name('mdc-table-row')
+                table_rows = self.browser.find_elements('class name', 'mdc-table-row')
                 tag_name = 'div'
             else:
                 tag_name = 'td'
             del (table_rows[0])
             for row in table_rows:
-                field = row.find_elements_by_tag_name(tag_name)[1]
+                field = row.find_elements('tag name', tag_name)[1]
                 ticker = field.text
-                link = field.find_element_by_tag_name('a').get_attribute('href')
+                link = field.find_element('tag name', 'a').get_attribute('href')
                 if any(x in link for x in ['xnys', 'xnas', 'xase']):
                     if link not in links:
                         symbols.append((ticker, link))
@@ -93,7 +103,8 @@ class Morningstar:
                     'fair_value': fv,
                     'uncertainty': self.uncertainty_rating(link),
                     'stars': self.star_rating(link),
-                    'link': link
+                    'link': link,
+                    'update_date': date.today()
                     }
             _, created = StockSymbol.objects.update_or_create(symbol=ticker, defaults=data)
             if created:
@@ -114,21 +125,30 @@ class Morningstar:
         """
         Return Morningstar Fair Value estimate for given symbol.
         """
-        if link != self.browser.current_url:
-            self.browser.get(link)
-            time.sleep(3.2)
-        if self.browser.find_elements_by_class_name('mdc-stock-analysis-view__body-report-article--quant'):
+        try:
+            if link != self.browser.current_url:
+                self.browser.get(link)
+                time.sleep(3.3)
+
+            stock_title = self.browser.find_element('class name', 'stock__title-rating__mdc')
+        except (InvalidArgumentException, NoSuchElementException):
+            print(f'{ticker} is invalid')
+            return
+
+        try:
+            stock_title.find_element('class name', 'mdc-star-rating__quant__mdc')
             print(f'Skipping {ticker} because "Q" value')
             return
+        except NoSuchElementException:
+            pass
+
         try:
-            class_name = 'mdc-valuation-capsule-indicator__scale-tip-fair-value'
-            try:
-                div = self.browser.find_element_by_class_name(f'{class_name}--bottom')
-            except NoSuchElementException:
-                div = self.browser.find_element_by_class_name(f'{class_name}--top')
-            fields = div.find_elements_by_class_name('mdc-data-point--number')
+            class_name = 'mdc-price-to-fair-value-summary__fair-value__mdc'
+            div = self.browser.find_element('class name', f'{class_name}')
+            fields = div.find_elements('class name', 'mdc-currency')
             fv = fields[0].text
             fv = fv.replace(',', '')
+            fv = fv.replace('$', '')
             fv = float(fv)
             return fv
         except (IndexError, NoSuchElementException):
@@ -141,8 +161,10 @@ class Morningstar:
         if link != self.browser.current_url:
             self.browser.get(link)
             time.sleep(2.5)
-        fields = self.browser.find_elements_by_class_name('mdc-data-point--string')
-        uncertainty = fields[4].text
+        fv_box_class = 'mdc-price-to-fair-value-summary__fair-value__mdc'
+        fv_box = self.browser.find_element('class name', fv_box_class)
+        all_text = fv_box.find_elements('class name', 'mdc-locked-text__mdc')
+        uncertainty = all_text[-1].text
         return uncertainty
 
     def star_rating(self, link):
@@ -152,5 +174,7 @@ class Morningstar:
         if link != self.browser.current_url:
             self.browser.get(link)
             time.sleep(2.5)
-        stars = len(self.browser.find_elements_by_class_name('mdc-security-header__star'))
+        # stars = len(self.browser.find_elements('class name', 'mdc-security-header__star'))
+        stock_title = self.browser.find_element('class name', 'stock__title-rating__mdc')
+        stars = len(stock_title.find_elements('class name', 'mdc-star-rating__star__mdc'))
         return stars

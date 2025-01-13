@@ -1,3 +1,5 @@
+from datetime import date
+
 from django.db import models
 
 
@@ -7,6 +9,7 @@ class StockSymbol(models.Model):
     stars = models.PositiveSmallIntegerField()
     uncertainty = models.CharField(max_length=10)
     link = models.URLField()
+    update_date = models.DateField(default=date.today)
 
 
 class Option(models.Model):
